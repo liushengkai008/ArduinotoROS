@@ -1,0 +1,26 @@
+#include "ros/ros.h"（是一个实用的头文件，引用了 ROS 系统中大部分常用的头文件）
+#include "std_msgs/String.h" （这引用了 std_msgs/String 消息）
+#include <sstream>
+int main(int argc, char **argv)
+{
+  
+  ros::init(argc, argv, "talker");（初始化ROS，指定节点名称talker）
+  ros::NodeHandle n;（为这个进程的节点创建一个句柄）
+  ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
+  （上述程序表示我们将在chatter 话题上发布std_msgs/String消息类型的消息）
+  ros::Rate loop_rate(10);（自循环的频率，这里以10HZ运行）
+  int count = 0;
+  while (ros::ok())
+  {
+    std_msgs::String msg;
+    std::stringstream ss;
+    ss << "hello world " << count;
+    msg.data = ss.str();
+    ROS_INFO("%s", msg.data.c_str());
+    chatter_pub.publish(msg);
+    ros::spinOnce();
+    loop_rate.sleep();
+    ++count;
+  }
+  return 0;
+}
